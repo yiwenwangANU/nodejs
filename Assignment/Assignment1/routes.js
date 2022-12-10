@@ -5,6 +5,7 @@ const requestHandler = (req, res) => {
     const method = req.method;
 
     if (url === '/') {
+        res.setHeader('Content-Type', 'text/html');
         res.write('<html>');
         res.write('<head><title>Enter message</title></head>');
         res.write('<body><p>Greeting</p><form action="/create-user" method="POST"><input type="text" name="username" ><input type="submit" value="submit"></form></body>');
@@ -23,9 +24,9 @@ const requestHandler = (req, res) => {
     if (url === '/create-user' && method === 'POST'){
         const body = [];
         req.on('data', chunk => body.push(chunk));
-        return req.on('end', () => {
+        req.on('end', () => {
             const parseBody = Buffer.concat(body).toString();
-            console.log(parseBody);
+            console.log(parseBody.split('=')[1]);
             res.statusCode = 302;
             res.setHeader('Location', '/');
             res.end();
