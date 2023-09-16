@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-    res.render('add-product', {
+    res.render('admin/add-product', {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
         formsCSS: true,
@@ -18,16 +18,11 @@ exports.postAddProduct = (req, res, next) => {
 }
 
 exports.getProducts = (req, res, next) => {
-    // Parse products to templete as pros
     Product.fetchAll((products) => {
-        res.render('shop', {pros: products, 
-            pageTitle: 'Shop', 
-            path: '/', 
-            hasProducts: products.length > 0,
-            activeShop: true,
-            productCSS: true,
+        res.render('admin/products', {
+            pros: products, 
+            pageTitle: 'Admin Products', 
+            path: '/admin/products', 
+        });   
     });
-    
-        
-    }); // Use the default templete engine to render shop.pug
 }
