@@ -6,6 +6,17 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Index</h1>
+    <% if(productList.length <= 0) { %>
+        <h1>No Product Found</h1> 
+    <% } else { %>
+        <% productList.forEach(product => { %>
+            <ul>
+                <li>Title: <%= product.title %></li>
+                <li>Price: <%= product.price %></li>
+                <img src="<%= product.imgUrl %>" alt= <%=product.title %>>
+                <li>Detail: <%= product.detail %></li>
+            </ul>
+        <% }) %>
+    <% } %>
 </body>
 </html>
