@@ -40,8 +40,6 @@ module.exports = class Product {
   }
 
   static getProductById(id, cb){
-    getProductsFromFile(products => {
-      cb(products.find(product => product.id === id));
-    })
+    getProductsFromFile(products => cb(products.find(product => product.id === id)))
   }
 };
