@@ -23,6 +23,7 @@ module.exports = class Cart{
         getFromCart(cartconent => {
             const products = cartconent.products;
             const totalPrice = cartconent.totalPrice;
+            console.log(products)
             let updatedProducts;
             const index = products.findIndex(product => product.id === id);
             if(index == -1){
@@ -32,7 +33,7 @@ module.exports = class Cart{
                 updatedProducts = [...products];
                 updatedProducts[index].qty = updatedProducts[index].qty + 1;
             }
-            const updatedCart = {updatedProducts, totalPrice: totalPrice + +price};
+            const updatedCart = {products: updatedProducts, totalPrice: totalPrice + +price};
             fs.writeFile(p, JSON.stringify(updatedCart), err => {
                 console.log(err);
             })
