@@ -23,7 +23,6 @@ module.exports = class Cart{
         getFromCart(cartconent => {
             const products = cartconent.products;
             const totalPrice = cartconent.totalPrice;
-            console.log(products)
             let updatedProducts;
             const index = products.findIndex(product => product.id === id);
             if(index == -1){
@@ -37,6 +36,25 @@ module.exports = class Cart{
             fs.writeFile(p, JSON.stringify(updatedCart), err => {
                 console.log(err);
             })
+        })
+    }
+
+    static removeFromCartById(id, price){
+        getFromCart(cartconent => {
+            const products = cartconent.products;
+            const totalPrice = cartconent.totalPrice;
+            const index = products.findIndex(product => product.id === id);
+            if(index == -1){
+                return;
+            }
+            else{
+                const updatedPrice = totalPrice - price * products[index].qty;
+                const updatedProducts = products.filter(product => product.id === id);
+                const updatedCart = {products: updatedProducts, totalPrice: updatedPrice };
+                fs.writeFile(p, JSON.stringify(updatedCart), err => {
+                    console.log(err);
+                })
+            }
         })
     }
 }
