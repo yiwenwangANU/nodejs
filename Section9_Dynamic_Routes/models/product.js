@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { maxHeaderSize } = require('http');
 const path = require('path');
+const Cart = require('../models/cart');
 
 const p = path.join(
   path.dirname(process.mainModule.filename),
@@ -56,6 +57,21 @@ module.exports = class Product {
         updatedProducts[index].imageUrl = imageUrl;
         updatedProducts[index].description = description;
         updatedProducts[index].price = price;
+        fs.writeFile(p, JSON.stringify(updatedProducts), err => {
+          console.log(err);
+        })
+      }
+    })
+  }
+
+  static deleteProduct(id){
+    getProductsFromFile(products => {
+      const index = products.findIndex(product => product.id === id);
+      if(index!=-1){
+        const product = products[index];
+        const price = product.price;
+        Cart.deleteProduct(id, price);
+        let updatedProducts = products.filter(product => product.id !== id);
         fs.writeFile(p, JSON.stringify(updatedProducts), err => {
           console.log(err);
         })
