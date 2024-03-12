@@ -30,6 +30,9 @@
                                     <form action="/add-to-cart" method="POST">
                                         <button class="btn">Add to Cart</button>
                                     </form>
+                                    <form action="/products/<%= product.id %>" method="get">
+                                        <input class="btn" type="submit" value="Details">
+                                    </form>
                                 </div>
                             </article>
                             <% } %>
