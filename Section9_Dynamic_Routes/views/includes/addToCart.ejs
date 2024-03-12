@@ -1,0 +1,8 @@
+<form action="/add-to-cart" method="POST">
+    <input type="hidden" name="productId" value="<%= product.id %>">
+    <input type="hidden" name="price" value="<%= product.price %>">
+    <button class="btn" type="submit">Add to Cart</button>
+</form>
+<form action="/products/<%= product.id %>" method="get">
+    <input class="btn" type="submit" value="Details">
+</form>

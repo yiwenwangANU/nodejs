@@ -1,7 +1,8 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-  res.render('admin/add-product', {
+  res.render('admin/edit-product', {
+    editing: false,
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     formsCSS: true,
@@ -29,3 +30,17 @@ exports.getProducts = (req, res, next) => {
     });
   });
 };
+
+exports.getEditProduct = (req, res, next) => {
+  const productId = req.params.productId;
+  const editing = req.query.edit;
+  Product.getProcuctById(productId, product => {
+    res.render('admin/edit-product', {
+      product: product,
+      editing: editing,
+      pageTitle: 'Edit Product',
+      path: '/admin/products'
+    })
+  })
+  
+}

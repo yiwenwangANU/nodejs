@@ -32,7 +32,7 @@ module.exports = class Cart{
             }
             else{
                 const newProduct = {id:id,qty:1};
-                updatedPrice = [...products, newProduct];
+                updatedProducts = [...products, newProduct];
             }
             const updatedCart = {products:updatedProducts,totalPrice:updatedPrice};
             fs.writeFile(p, JSON.stringify(updatedCart), err => {
