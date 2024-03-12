@@ -46,4 +46,20 @@ module.exports = class Product {
       cb(matchedProduct);
     })
   }
+
+  static updateProduct(id, title, imageUrl, description, price){
+    getProductsFromFile(products => {
+      const index = products.findIndex(product => product.id === id);
+      if(index!=-1){
+        let updatedProducts = [...products];
+        updatedProducts[index].title = title;
+        updatedProducts[index].imageUrl = imageUrl;
+        updatedProducts[index].description = description;
+        updatedProducts[index].price = price;
+        fs.writeFile(p, JSON.stringify(updatedProducts), err => {
+          console.log(err);
+        })
+      }
+    })
+  }
 };
