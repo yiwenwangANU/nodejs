@@ -55,11 +55,10 @@ module.exports = class Cart{
                     let productId = p.id;
                     let productQty = p.qty;
                     let matchedProduct = products.find(product => product.id === productId);
-                    cartProduct.push({product: matchedProduct, qty: productQty});               
+                    cartProduct.push({product: matchedProduct, qty: productQty});            
                 })
-            })
-                console.log(cartProduct);
                 cb(cartProduct);
+            })
             })
 
     }
