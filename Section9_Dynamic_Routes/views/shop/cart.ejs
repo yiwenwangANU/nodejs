@@ -3,4 +3,12 @@
 
     <body>
         <%- include('../includes/navigation.ejs') %>
+        <main>
+            <% if(cartProducts.length>0){ %>
+                <h1>Lol</h1>
+            <% } else{ %>
+                <h1>No Product in Cart!</h1>
+                <%= cartProducts %>
+            <% } %>
+        </main>
         <%- include('../includes/end.ejs') %>

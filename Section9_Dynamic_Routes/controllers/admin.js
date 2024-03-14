@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Cart = require('../models/cart');
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
@@ -33,7 +34,9 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
+  const price = req.body.price;
   Product.deleteProduct(productId);
+  Cart.deleteProduct(productId, price);
   res.redirect('/admin/products');
 }
 

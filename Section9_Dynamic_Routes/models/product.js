@@ -1,7 +1,6 @@
 const fs = require('fs');
 const { maxHeaderSize } = require('http');
 const path = require('path');
-const Cart = require('../models/cart');
 
 const p = path.join(
   path.dirname(process.mainModule.filename),
@@ -70,7 +69,6 @@ module.exports = class Product {
       if(index!=-1){
         const product = products[index];
         const price = product.price;
-        Cart.deleteProduct(id, price);
         let updatedProducts = products.filter(product => product.id !== id);
         fs.writeFile(p, JSON.stringify(updatedProducts), err => {
           console.log(err);

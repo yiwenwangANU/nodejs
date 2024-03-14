@@ -40,7 +40,30 @@ module.exports = class Cart{
             })
         })
     }
-    
+    // Output be like: {"products":[{"id":"0.558673316244021","qty":2}],"totalPrice":41.98}
+    static getCart(cb){
+        getCartFromFile(cb);
+    }
+
+    // Output be like: [{"product":product,"qty":1}]
+    static getCartProducts(cb){
+        getCartFromFile(cart => {
+            const pros = cart.products;
+            let cartProduct = [];
+            Product.fetchAll(products => {
+                pros.forEach(p => {
+                    let productId = p.id;
+                    let productQty = p.qty;
+                    let matchedProduct = products.find(product => product.id === productId);
+                    cartProduct.push({product: matchedProduct, qty: productQty});               
+                })
+            })
+                console.log(cartProduct);
+                cb(cartProduct);
+            })
+
+    }
+
     static deleteProduct(id, price){
         getCartFromFile(cart => {
             const products = cart.products;
