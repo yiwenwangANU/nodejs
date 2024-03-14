@@ -63,3 +63,10 @@ exports.postAddToCart = (req, res, next) => {
   Cart.addToCart(productId, price);
   res.redirect('/products');
 }
+
+exports.postRemoveFromCart = (req, res, next) => {
+  const productId = req.body.productId;
+  const price = req.body.price;
+  Cart.deleteProduct(productId, price);
+  res.redirect('/cart')
+}

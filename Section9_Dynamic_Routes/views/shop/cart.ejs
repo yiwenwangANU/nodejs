@@ -8,6 +8,11 @@
                 <ul>
                     <% cartProducts.forEach(cartProduct => { %>
                         <li><%= cartProduct.product.title %>(<%= cartProduct.qty %>)</li>
+                        <form action="/remove-from-cart" method="post">
+                            <input type="hidden" name="productId" value="<%= cartProduct.product.id %>">
+                            <input type="hidden" name="price" value="<%= cartProduct.product.price %>">
+                            <input class="btn "type="submit" value="Remove">
+                        </form>
                     <% }) %>
                 </ul>
             <% } else{ %>
