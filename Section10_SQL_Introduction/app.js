@@ -1,4 +1,5 @@
 const path = require('path');
+const db = require('./util/database');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -6,6 +7,9 @@ const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 
 const app = express();
+db.execute('SELECT * FROM product')
+.then(result => console.log(result))
+.catch(err => console.log(err));
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
