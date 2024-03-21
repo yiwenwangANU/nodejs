@@ -10,16 +10,16 @@ exports.getProducts = (req, res, next) => {
     });
   });
 };
-exports.getProduct = (req, res, next) => {
+
+exports.getProductDetails = (req, res, next) => {
   const productId = req.params.productId;
-  Product.getProcuctById(productId, product => {
+  Product.getProductFromId(productId, product => {
     res.render('shop/product-detail', {
       product: product,
       pageTitle: 'Details',
       path: '/products'
     })
-  });
-  
+  })
 }
 
 exports.getIndex = (req, res, next) => {
@@ -33,14 +33,18 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  Cart.getCartProducts(cartProducts => {
+  Cart.getCartProductDetails(cartProductDetails => {
+    //[...{product:product,qty:4}]
     res.render('shop/cart', {
-      cartProducts: cartProducts,
+      cartProductDetails: cartProductDetails,
       path: '/cart',
       pageTitle: 'Your Cart'
     });
+
   })
-  
+
+    
+
 };
 
 exports.getOrders = (req, res, next) => {
@@ -57,16 +61,16 @@ exports.getCheckout = (req, res, next) => {
   });
 };
 
-exports.postAddToCart = (req, res, next) => {
+exports.postCart = (req, res, next) => {
   const productId = req.body.productId;
   const price = req.body.price;
   Cart.addToCart(productId, price);
-  res.redirect('/products');
+  res.redirect('/');
 }
 
 exports.postRemoveFromCart = (req, res, next) => {
   const productId = req.body.productId;
   const price = req.body.price;
-  Cart.deleteProduct(productId, price);
-  res.redirect('/cart')
+  Cart.removeFromCart(productId, price);
+  res.redirect('/cart');
 }

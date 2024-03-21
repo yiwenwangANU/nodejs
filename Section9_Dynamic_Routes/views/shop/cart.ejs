@@ -3,21 +3,17 @@
 
     <body>
         <%- include('../includes/navigation.ejs') %>
-        <main>
-            <% if(cartProducts.length>0){ %>
-                <ul>
-                    <% cartProducts.forEach(cartProduct => { %>
-                        <li><%= cartProduct.product.title %>(<%= cartProduct.qty %>)</li>
-                        <form action="/remove-from-cart" method="post">
-                            <input type="hidden" name="productId" value="<%= cartProduct.product.id %>">
-                            <input type="hidden" name="price" value="<%= cartProduct.product.price %>">
-                            <input class="btn "type="submit" value="Remove">
-                        </form>
-                    <% }) %>
-                </ul>
-            <% } else{ %>
-                <h1>No Product in Cart!</h1>
-                <%= cartProducts %>
-            <% } %>
-        </main>
+        <!-- [...{product:product,qty:4}] -->
+        <%if(cartProductDetails.length>0){%>
+            <% cartProductDetails.forEach(productWithQty => {%>
+                <li><%= productWithQty.product.title%>(<%= productWithQty.qty%>)</li>
+                <form action="/remove-from-cart" method="post">
+                    <input type="hidden" name="productId" value="<%= productWithQty.product.id%>">
+                    <input type="hidden" name="price" value="<%= productWithQty.product.price%>">
+                    <input class="btn" type="submit" value="remove">
+                </form>
+            <% })%>
+        <%}else{%>
+            <h1>Cart is empty!</h1>
+        <%}%>
         <%- include('../includes/end.ejs') %>

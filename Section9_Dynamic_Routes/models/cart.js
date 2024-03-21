@@ -13,70 +13,74 @@ const getCartFromFile = cb => {
         }
     })
 }
+
 module.exports = class Cart{
     constructor(products, totalPrice){
         this.products = products;
         this.totalPrice = totalPrice;
     }
 
-    static addToCart(id, price){
-        getCartFromFile(cart => {
-            const products = cart.products;
-            const totalPrice = cart.totalPrice;
-            let updatedProducts;
-            const updatedPrice = totalPrice + +price;
-            const index = products.findIndex(product => product.id === id);
-            if(index!=-1){
-                updatedProducts = [...products];
-                updatedProducts[index].qty = updatedProducts[index].qty + 1;
-            }
-            else{
-                const newProduct = {id:id,qty:1};
-                updatedProducts = [...products, newProduct];
-            }
-            const updatedCart = {products:updatedProducts,totalPrice:updatedPrice};
-            fs.writeFile(p, JSON.stringify(updatedCart), err => {
-                console.log(err);
-            })
-        })
-    }
-    // Output be like: {"products":[{"id":"0.558673316244021","qty":2}],"totalPrice":41.98}
-    static getCart(cb){
+    static fetchAll(cb){
         getCartFromFile(cb);
     }
 
-    // Output be like: [{"product":product,"qty":1}]
-    static getCartProducts(cb){
+    static addToCart(productId, price){
         getCartFromFile(cart => {
-            const pros = cart.products;
-            let cartProduct = [];
-            Product.fetchAll(products => {
-                pros.forEach(p => {
-                    let productId = p.id;
-                    let productQty = p.qty;
-                    let matchedProduct = products.find(product => product.id === productId);
-                    cartProduct.push({product: matchedProduct, qty: productQty});            
-                })
-                cb(cartProduct);
+            const cartProducts = cart.products;
+            const cartTotalPrice = cart.totalPrice;
+            const index = cartProducts.findIndex(product => product.id === productId);
+            let currentCartProducts;
+            const currentCartTotalPrice = cartTotalPrice + +price;
+            if(index!=-1){
+                currentCartProducts = [...cartProducts];
+                currentCartProducts[index].qty = currentCartProducts[index].qty + 1;
+            }
+            else{
+                currentCartProducts = [...cartProducts, {id:productId,qty:1}];
+            }
+            const currentCart = {products:currentCartProducts,totalPrice:currentCartTotalPrice};
+            fs.writeFile(p, JSON.stringify(currentCart), err => {
+                console.log(err);
             })
-            })
-
+        })
     }
 
-    static deleteProduct(id, price){
+    static removeFromCart(productId, price){
         getCartFromFile(cart => {
-            const products = cart.products;
-            const totalPrice = cart.totalPrice;
-            let updatedProducts;
-            const index = products.findIndex(product => product.id === id);
+            const cartProducts = cart.products;
+            const cartTotalPrice = cart.totalPrice;
+            const index = cartProducts.findIndex(product => product.id === productId);
+            let currentCartProducts;
+            let currentCartTotalPrice;
             if(index!=-1){
-                const updatedPrice = totalPrice - products[index].qty * price;
-                updatedProducts = products.filter(product => product.id !== id);
-                const updatedCart = {products:updatedProducts,totalPrice:updatedPrice};
-                fs.writeFile(p, JSON.stringify(updatedCart), err => {
-                console.log(err);
+                currentCartProducts = cartProducts.filter(product => product.id !== productId);
+                currentCartTotalPrice = cartTotalPrice - cartProducts[index].qty * price;
+                const currentCart = {products:currentCartProducts,totalPrice:currentCartTotalPrice};
+                fs.writeFile(p, JSON.stringify(currentCart), err => {
+                    console.log(err);
                 })
             }
+            else{
+                return;
+            }
         })
+    }
+
+    static getCartProductDetails(cb){
+        // returning cartProductDetails in the form of [...{product:product,qty:4}]
+        getCartFromFile(cart => {
+            const cartProducts = cart.products;
+            let cartProductDetails = [];
+            Product.fetchAll(products => {
+                cartProducts.forEach(cartProduct => {
+                    const productId = cartProduct.id;
+                    const qty = cartProduct.qty;
+                    const product = products.find(product => product.id === productId);
+                    cartProductDetails.push({product:product,qty:qty});
+                })
+                cb(cartProductDetails);
+            })    
+        });
+        
     }
 }

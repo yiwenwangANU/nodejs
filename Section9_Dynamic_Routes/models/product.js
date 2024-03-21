@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { maxHeaderSize } = require('http');
 const path = require('path');
 
 const p = path.join(
@@ -40,10 +39,10 @@ module.exports = class Product {
     getProductsFromFile(cb);
   }
 
-  static getProcuctById(id, cb){
+  static getProductFromId(id, cb){
     getProductsFromFile(products => {
-      const matchedProduct = products.find(product => product.id === id);
-      cb(matchedProduct);
+      const product = products.find(product => product.id === id);
+      cb(product);
     })
   }
 
@@ -51,14 +50,16 @@ module.exports = class Product {
     getProductsFromFile(products => {
       const index = products.findIndex(product => product.id === id);
       if(index!=-1){
-        let updatedProducts = [...products];
-        updatedProducts[index].title = title;
-        updatedProducts[index].imageUrl = imageUrl;
-        updatedProducts[index].description = description;
-        updatedProducts[index].price = price;
-        fs.writeFile(p, JSON.stringify(updatedProducts), err => {
+        products[index].title = title;
+        products[index].imageUrl = imageUrl;
+        products[index].description = description;
+        products[index].price = price;
+        fs.writeFile(p, JSON.stringify(products), err => {
           console.log(err);
         })
+      }
+      else{
+        return;
       }
     })
   }
@@ -67,12 +68,13 @@ module.exports = class Product {
     getProductsFromFile(products => {
       const index = products.findIndex(product => product.id === id);
       if(index!=-1){
-        const product = products[index];
-        const price = product.price;
-        let updatedProducts = products.filter(product => product.id !== id);
+        const updatedProducts = products.filter(product => product.id !== id);
         fs.writeFile(p, JSON.stringify(updatedProducts), err => {
           console.log(err);
         })
+      }
+      else{
+        return;
       }
     })
   }
