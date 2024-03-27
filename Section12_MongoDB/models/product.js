@@ -9,7 +9,13 @@ module.exports = class Product{
     this.imageUrl = imageUrl;
     this._id = _id ? new ObjectId(_id) : null;
   }
-
+  save(){
+    db = getDb()
+    return db.collection('products')
+    .insertOne(this)
+    .then(result => console.log(result))
+    .catch(err => console.log(err))
+  }
   static fetchAll(){
     db = getDb();
     return db.collection('products')
