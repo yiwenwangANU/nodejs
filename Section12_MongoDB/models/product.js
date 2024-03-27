@@ -26,4 +26,13 @@ module.exports = class Product{
     })
     .catch(err => console.log(err))
   }
+  static findById(productId){
+    db = getDb()
+    return db.collection('products')
+    .findOne({_id: new ObjectId(productId)})
+    .then(result => {
+      return result
+    })
+    .catch(err => console.log(err))
+  }
 }
