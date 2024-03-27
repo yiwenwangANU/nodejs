@@ -49,4 +49,14 @@ module.exports = class Product{
     })
     .catch(err => console.log(err))
   }
+
+  static deleteById(productId){
+    db = getDb()
+    db.collection('products')
+    .deleteOne({_id: new ObjectId(productId)})
+    .then(result => {
+      console.log(result)
+    })
+    .catch(err => console.log(err))
+  }
 }
