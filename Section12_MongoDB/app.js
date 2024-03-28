@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
 const {connectToDb} = require('./util/database')
+const User = require('./models/user')
 
 const app = express();
 
@@ -25,13 +26,15 @@ connectToDb((err) => {
 })
 
 app.use((req, res, next) => {
-  next()
-  // User.findById(1)
-  //   .then(user => {
-  //     req.user = user;
-  //     next();
-  //   })
-  //   .catch(err => console.log(err));
+  User
+  .findById('6604d4d4770c43f224d14a0e')
+  .then(user => {
+    req.user = new User(user.username, user.email, user.cart, user._id);
+    next();
+  })
+  .catch(err => console.log(err));
+ 
+  
 });
 
 app.use('/admin', adminRoutes);
