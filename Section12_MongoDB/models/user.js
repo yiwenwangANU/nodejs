@@ -33,27 +33,25 @@ module.exports = class User {
       .then(result => console.log(result))
       .catch(err => console.log(err))
     }
-    // db.users.updateOne({ _id: ObjectId('6604d4d4770c43f224d14a0e')}, {$pull: {'cart.items': 123}})
-    // // .findOne({_id: this._id, 'cart.item.productId': product._id})
-    // .then(result => {
-    //   return result
-    // })
-    // .catch(err => console.log(err))
-
-    // if(productIndex!=-1){
-    //   return db.collection('users')
-    //   .updateOne({_id: this._id}, {$inc: {'cart.item[$productIndex].qty': 1}}) 
-    //   .then(result => console.log(result))
-    //   .catch(err => console.log(err))
-    // }
-    // else{
-    //   const updatedCart = { item: [{ productId: new ObjectId(product._id), qty: 1 }] }
-    //   return db
-    //     .collection('users')
-    //     .updateOne({ _id: this._id }, { $set: { cart: updatedCart } })
-
-    // }
     
+  }
+
+  getCart(){
+    db = getDb()
+    const productIds = this.cart.items.map(i => i.productId)
+    return db
+    .collection('products')
+    .find({_id: {$in: productIds}})
+    .toArray()
+    .then(products => {
+      return products.map(p => {
+        return {...p, qty: this.cart.items.find(i => {
+          return i.productId.toString() === p._id.toString()
+        }).qty
+      }
+      })
+    })
+    .catch(err => console.log(err))
   }
 
   static findById(userId) {
