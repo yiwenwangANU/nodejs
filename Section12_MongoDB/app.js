@@ -27,7 +27,7 @@ connectToDb((err) => {
 
 app.use((req, res, next) => {
   User
-  .findById('6604d4d4770c43f224d14a0e')
+  .findById('660509e4770c43f224d14a0f')
   .then(user => {
     req.user = new User(user.username, user.email, user.cart, user._id);
     next();

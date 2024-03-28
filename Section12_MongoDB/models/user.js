@@ -54,6 +54,23 @@ module.exports = class User {
     .catch(err => console.log(err))
   }
 
+  deleteCart(productId){
+    const itemNumber = this.cart.items.find(i => i.productId.toString() === productId).qty
+    db = getDb()
+    if(itemNumber>1){
+      return db.collection('users')
+      .updateOne({_id: this._id, 'cart.items.productId': new ObjectId(productId)}, {$inc: {'cart.items.$.qty': -1}})
+      .then(result => console.log(result))
+      .catch(err => console.log(err))
+    }
+    else{
+      return db.collection('users')
+      .updateOne({_id: this._id}, {$pull: {'cart.items':{productId: new ObjectId(productId)}}})
+      .then(result => console.log(result))
+      .catch(err => console.log(err))
+    }
+  }
+
   static findById(userId) {
     db = getDb()
     return db.collection('users')
