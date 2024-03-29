@@ -1,0 +1,28 @@
+form{
+    display: block;
+    margin: auto;
+    width: 50%;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+}
+
+form div.form-control{
+    display: block;
+    margin: auto;
+    padding: 0.5rem;
+    width: 80%;
+}
+
+form div.form-control input{
+    margin-top: 0.2rem;
+    width: 100%;
+}
+
+form div.form-control textarea{
+    margin-top: 0.2rem;
+    width: 100%;
+}
+
+form div.form-control input.btn{
+    width: 30%;
+}

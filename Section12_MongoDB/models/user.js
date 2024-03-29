@@ -1,5 +1,5 @@
 const { ObjectId } = require("mongodb");
-const { getDb } = require("../util/database");
+const { getDb } = require("../utils/database");
 
 let db;
 module.exports = class User {

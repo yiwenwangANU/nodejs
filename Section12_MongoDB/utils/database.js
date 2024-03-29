@@ -1,10 +1,10 @@
 const { MongoClient } = require('mongodb')
-
+const {connectionString} = require('./pass')
 let dbConnection;
 
 module.exports =  {
     connectToDb: cb => {
-        MongoClient.connect('mongodb+srv://username:passw@cluster0.rb9vaxh.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0')
+        MongoClient.connect(connectionString)
         .then(client => {
             dbConnection = client.db();
             cb();

@@ -1,0 +1,48 @@
+* {
+    box-sizing: border-box;
+}
+
+main{
+    padding: 16px;
+}
+
+body{
+    margin: 0px;
+}
+
+.flex-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-items{
+    width: 20rem;
+    margin: auto;
+    box-shadow: 5px 5px 5px 5px grey;
+}
+
+.flex-items ul{
+    padding-left: 0px;
+}
+
+.product-title{
+    text-align: center;
+    font-size: 1.2rem;
+    font-family: "Open Sans", sans-serif;
+}
+
+.product-img img{
+    width: 100%;
+}
+
+.product-price{
+    text-align: center;
+    font-size: 1.2rem;
+    font-family: "Open Sans", sans-serif;
+}
+
+.product-detail{
+    text-align: center;
+    font-size: 1.2rem;
+    font-family: "Open Sans", sans-serif;
+}

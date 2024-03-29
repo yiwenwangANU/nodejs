@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const productsController = require('../controllers/products');
 
 const router = express.Router();
 const adminData = require('./admin');
@@ -9,17 +10,6 @@ const adminData = require('./admin');
 //     res.sendFile(path.join(__dirname, '..', 'views', 'main.html'));
 // })
 
-router.get('/', (req, res, next) => {
-    const products = adminData.products;
-    // Parse products to templete as pros
-    res.render('shop', {pros: products, 
-        pageTitle: 'Shop', 
-        path: '/', 
-        hasProducts: products.length > 0,
-        activeShop: true,
-        productCSS: true,
-        
-    }); // Use the default templete engine to render shop.pug
-})
+router.get('/', productsController.getProducts);
 
 module.exports = router

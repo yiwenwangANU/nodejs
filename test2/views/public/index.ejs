@@ -1,0 +1,16 @@
+<%- include('../includes/head.ejs') %>
+</head>
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <h1>Main Page</h1>
+    <div class="product-list">
+        <% for (let product of productList) { %>
+            <div class="product">
+                <div><h2><%= product.title %></h2></div>
+                <div><img src=<%= product.img_url %> alt=<%=product.title %>></div>
+                <div><h2><%= product.price %></h2></div>
+                <div><p><%= product.detail %></p></div>
+            </div>
+        <%  } %>
+    </div>
+<%- include('../includes/foot.ejs') %>

@@ -4,7 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
-const {connectToDb} = require('./util/database')
+const {connectToDb} = require('./utils/database')
 const User = require('./models/user')
 
 const app = express();

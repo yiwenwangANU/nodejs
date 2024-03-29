@@ -1,0 +1,19 @@
+.product-form{
+    display: block;
+    margin: auto;
+    width: 50%;
+}
+
+.form-control label{
+    padding-bottom: 0.25rem; 
+    display: block;
+}
+
+.form-control input, textarea{
+    margin-bottom: 1rem;
+    width: 80%;
+}
+
+.form-control input.submit_btn{
+    width: 20%;
+}

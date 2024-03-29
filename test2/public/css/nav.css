@@ -1,0 +1,23 @@
+.nav-control{
+    width: 100%;
+    height: 3.5rem;
+    background-color: #00695c;
+    display: flex;
+}
+
+.nav__itemlist{
+    display: flex;
+    list-style-type: none;
+}
+
+.nav__item a{
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    padding: 0;
+}
+
+.nav__item a:hover,
+.nav__item a.active{
+    color: yellow;
+}
