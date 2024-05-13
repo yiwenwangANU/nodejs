@@ -1,98 +1,116 @@
-// 1. Get sign up data from sign up page, check if the email is duplicated
-exports.postSignup = (req, res, next) => { // @ some controller
-    const email = req.body.email;
-    const password = req.body.password;
-    const confirmpassword = req.body.confirmpassword;
-    User
-    .findOne({email: email})
-    .then(userDoc => {
-      if(userDoc){
-        return res.redirect('/signup')
-      }
-      const user = new User({
-        email: email,
-        password: password,
-        cart: {items: []}
-      })
-      return user.save()
-    })
-    .then(result => {
-      res.redirect('/login')
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  };
+// Part1. Using connect-flash to flash the error message.
+// req.flash is a one time session, it will auto-delete after retrieviong. 
+// npm install --save connect--flash
+const flash = require('connect-flash'); //@ app.js
+app.use(flash()); // @app.js after session
 
+User.findOne({email: email}) // @ in some controller before the redirect
+.then(user => {
+  if(!user){
+    req.flash('error', 'Invalid email or password'); // store the flash info
+    return res.redirect('/login')
+  }})
+
+exports.getLogin = (req, res, next) => {  // @ in some controller after the redirect
+  let errorMessage = req.flash('error'); // get the flash info
+  res.render('auth/login', {
+    path: '/login',
+    pageTitle: 'Login',
+    errorMessage: errorMessage.length > 0 ? errorMessage: null
+  });
+};
+
+// Part2. Create sign up page, create postSignup in controller using async/await.
+// 1. Check if the email is duplicated, change the User model by removing name and adding password
 // 2. Encrypt the password
 // npm install --save bcryptjs
 const bcrypt = require('bcryptjs'); // @ some controller
 bcrypt.hash(password, 12); // @ some controller, hash password 12 rounds, this line of code is asynchronous 
 
 // entire code be like
-exports.postSignup = (req, res, next) => {
-    const email = req.body.email;
-    const password = req.body.password;
-    const confirmpassword = req.body.confirmpassword;
-    User
-    .findOne({email: email})
-    .then(userDoc => {
-      if(userDoc){
-        return res.redirect('/signup')
-      }
-      return bcrypt
-      .hash(password, 12)
-      .then(hashedPassword => {
-        const user = new User({
-          name: email,
-          email: email,
-          password: hashedPassword,
-          cart: {items: []}
-        })
-        return user
-        .save()
-        .then(result => {
-          res.redirect('/login')
-        })
-      })
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  };
+exports.postSignup = async (req, res, next) => {
+  try{
+    const {email, password, confirmPassword} = req.body;
 
-  //3. login functionality
+    const user = await User.findOne({'email': email});
+    if(user){
+      req.flash('error', 'Email already exist');
+      return res.redirect('/signup');
+    }
+  
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const newUser = new User({
+      email: email,
+      password: hashedPassword,
+      cart: {items: []}
+    })
+    await newUser.save();
+    res.redirect('/login');
+  }
+  catch(err){
+    console.log(err);
+    req.flash('error', 'Something went wrong. Please try again.');
+    res.redirect('/signup')
+  }
+  
+};
+
+  //Part3. Create login page, create postLogin in controller.
+  // compare passwords using bcrypt.compare()
   bcrypt.compare(password, user.password) // asy code, return 'true' in then if match
   // entire code
-  exports.postLogin = (req, res, next) => {
-    const email = req.body.email;
-    const password = req.body.password;
-    User.findOne({email: email})
-    .then(user => {
+  exports.postLogin = async (req, res, next) => {
+    try{
+      const {email, password} = req.body;
+
+      const user = await User.findOne({'email': email});
+      
       if(!user){
-        return res.redirect('/login')
-      }
-      bcrypt
-      .compare(password, user.password)
-      .then(doMatch => {
-        if(doMatch){
-          req.session.isLoggedIn = true;
-          req.session.user = user;
-          return req.session.save(err => {
-            console.log(err);
-            res.redirect('/');
-          });
-        }
-        return res.redirect('/login')
-      })
-      .catch(err => {
-        console.log(err);
+        req.flash('error', 'Invalid email or password');
         return res.redirect('/login');
-      })
-    })
+      }
+    
+      const doMatch = await bcrypt.compare(password, user.password);
+      if(!doMatch){
+        req.flash('error', 'Invalid email or password');
+        return res.redirect('/login');
+      }else{
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        await req.session.save();
+        res.redirect('/');
+      }
+    }
+    catch(err){
+      console.log(err);
+      req.flash('error', 'Something went wrong. Please try again.');
+      res.redirect('/login');
+    }
   };
 
-  // 4. Protect routes using login information
+
+  // Ensure the session was saved before redirect
+      req.session.isLoggedIn = true;
+      req.session.userId = user._id;
+      await req.session.save(err => {
+        if(err){
+          console.log(err);
+        }
+        res.redirect('/');
+      });
+// use session to store user id instead of user object
+      app.use((req, res, next) => {
+        if (!req.session.userId) {
+          return next();
+        }
+        User.findById(req.session.userId)
+          .then(user => {
+            req.user = user;
+            next();
+          })
+          .catch(err => console.log(err));
+      });
+  // Part4. Protect routes using login information
   exports.getAddProduct = (req, res, next) => {
     if(!req.session.isLoggedIn){
       return res.redirect('/login')
@@ -106,7 +124,7 @@ exports.postSignup = (req, res, next) => {
       });
     }};
 
-//5. Add middleware that can add before all middleware I want to protect
+// Add middleware that can add before all middleware I want to protect
 module.exports = (req, res, next) => { // @ middleware/is_auth.js
     if(!req.session.isLoggedIn){
         return res.redirect('/login')
@@ -117,7 +135,7 @@ module.exports = (req, res, next) => { // @ middleware/is_auth.js
 const isAuth = require('../middleware/is_auth') // @ route 
 router.get('/add-product', isAuth, adminController.getAddProduct);
 
-// 6. CSRF attacks, people abuse your session by using fake site to execute intended request which is invisible to user
+// Part5. CSRF attacks, people abuse your session by using fake site to execute intended request which is invisible to user
 // ensure people can use your session only when working with your views, session should not be available on other pages
 // npm install --save tiny-csrf, cookie-parser
 // @ https://www.npmjs.com/package/tiny-csrf
@@ -142,7 +160,7 @@ app.use( // @ app.js after session
   });
 
 //   <form action="/logout" method="post"> // @ any views than contain post request
-//                     <input type="hidden" name="_csrf" value="csrfToken">
+//                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 //                     <button type="submit">Logout</button>
 //   </form>
 
@@ -153,22 +171,3 @@ app.use((req, res, next) => { // @ app.js before routing middleware
     next();
   })
 
-// 8. store data(error message) before redirect(which is a new request), use one time use session ==> flash
-// npm install --save connect--flash
-const flash = require('connect-flash'); //@ app.js
-app.use(flash()); // @app.js after session
-User.findOne({email: email}) // @ in some controller before the redirect
-.then(user => {
-  if(!user){
-    req.flash('error', 'Invalid email or password');
-    return res.redirect('/login')
-  }})
-
-exports.getLogin = (req, res, next) => {  // @ in some controller after the redirect
-  let errorMessage = req.flash('error');
-  res.render('auth/login', {
-    path: '/login',
-    pageTitle: 'Login',
-    errorMessage: errorMessage.length > 0 ? errorMessage: null
-  });
-};
