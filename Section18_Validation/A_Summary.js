@@ -59,4 +59,28 @@ router.post('/login', [ // @router
     .trim()
 ], authController.postLogin);
 
+
 // 5. Add validation to login page, add-product and edit-product page
+
+// 6. Not using tiny-csrf anymore, use csrf-sync instead
+const { csrfSync } = require('csrf-sync'); //@app.js
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(session());
+
+const { csrfSynchronisedProtection } = csrfSync({ //csrf part should after session part and before route part
+    getTokenFromRequest: (req) => req.body['CSRFToken']
+});
+app.use(csrfSynchronisedProtection);
+
+app.use((req, res, next) => {
+    res.locals.isLoggedIn = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
+app.use(routes)
+
+// in views: <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
