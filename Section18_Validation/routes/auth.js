@@ -14,7 +14,16 @@ router.get('/reset', authController.getReset);
 
 router.get('/reset/:token', authController.getNewPassword);
 
-router.post('/login', authController.postLogin);
+router.post('/login', [
+    body('email')
+    .isEmail().withMessage('Please enter a valid email!')
+    .trim()
+    .normalizeEmail(),
+    body('password', 'Email and password does not match!')
+    .isAlphanumeric()
+    .isLength({min: 4})
+    .trim(),
+], authController.postLogin);
 
 router.post('/signup', [
     body('email')

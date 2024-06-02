@@ -11,7 +11,8 @@ exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    errorMessage: errorMessage.length > 0 ? errorMessage : null
+    errorMessage: errorMessage.length > 0 ? errorMessage : null,
+    oldInput: {email: ''}
   });
 };
 
@@ -29,10 +30,23 @@ exports.getSignup = (req, res, next) => {
 exports.postLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      return res.status(422).render('auth/login', {
+          pageTitle: 'Login',
+          path: '/auth/login',
+          errorMessage: errors.array()[0].msg,
+          oldInput: {email: email}
+        });
+  }
     const user = await User.findOne({ 'email': email });
     if (!user) {
-      req.flash('error', 'Email and password does not match!');
-      return res.redirect('/login');
+      return res.status(422).render('auth/login', {
+        pageTitle: 'Login',
+        path: '/auth/login',
+        errorMessage: 'Email and password does not match!',
+        oldInput: {email: email}
+      });
     }
 
     const doMatch = await bcrypt.compare(password, user.password);
