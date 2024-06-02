@@ -21,7 +21,8 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    errorMessage: errorMessage.length > 0 ? errorMessage : null
+    errorMessage: errorMessage.length > 0 ? errorMessage : null,
+    oldInput: {email: '', password: ''}
   });
 };
 
@@ -64,22 +65,10 @@ exports.postSignup = async (req, res, next) => {
       return res.status(422).render('auth/signup', {
           pageTitle: 'Signup',
           path: '/auth/signup',
-          errorMessage: errors.array()[0].msg
+          errorMessage: errors.array()[0].msg,
+          oldInput: {email: email, password: password}
         });
   }
-    // if (!password || !confirmPassword || !email) {
-    //   req.flash('error', 'username and password are required!');
-    //   return res.redirect('/signup');
-    // }
-    // if (password !== confirmPassword) {
-    //   req.flash('error', 'Passwords do not match!');
-    //   return res.redirect('/signup');
-    // } 
-    // const user = await User.findOne({ 'email': email });
-    // if (user) {
-    //   req.flash('error', 'Email has already been used!');
-    //   return res.redirect('/signup');
-    // } else 
     const hashedPassword = await bcrypt.hash(password, 12);
     const newUser = new User({
       email: email,
