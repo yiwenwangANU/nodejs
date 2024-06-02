@@ -4,28 +4,29 @@
 // 2. In the router, create validation logic 
 const { check, body } = require('express-validator'); //@router
 router.post('/signup', [
-    check('email')
-        .isEmail().withMessage('Please enter a valid email!')
-        .trim()
-        .custom(async (email, { req }) => {     // add custom async validation
-            const user = await User.findOne({ email: email });
-            if (user) {
-                throw new Error('E-mail already exists!');
-            }
-        }),
-    check('password', 'Please enter a password with only numbers and texts and at least 5 characters')
-        .isLength({ min: 5 })
-        .isAlphanumeric()
-        .trim(), // two check with one error message
+    body('email')
+    .isEmail().withMessage('Please enter a valid email!')
+    .trim()
+    .normalizeEmail()
+    .custom(async (email, {req}) => {
+        const user = await User.findOne({email: email});
+        if(user){
+            next(new Error('Email already exist!'));
+        }
+    }).withMessage('Email already exist!'),
+    body('password', 'Please enter a password with only numbers and texts and at least 4 characters')
+    .isAlphanumeric()
+    .isLength({min: 4})
+    .trim(),
     body('confirmPassword')
-        .trim()
-        .custom((confirmPassword, { req }) => {
-            if (confirmPassword !== req.body.password) {
-                throw new Error('Password confirmation does not match password');
-            }
-            // Indicates the success of this synchronous custom validator
-            return true;
-        }),
+    .custom((confirmPassword, {req}) => {
+        if(confirmPassword !== req.body.password){
+            throw new Error('Password confirmation does not match password!');
+        }
+        return true
+    })
+    .trim()
+
 ], authController.postSignup);
 
 // 3. In the controller, get validation error, if error, return with res.render()
