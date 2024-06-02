@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const flash = require('connect-flash');
-const csurf = require("tiny-csrf");
+const { csrfSync } = require("csrf-sync");
 const cookieParser = require("cookie-parser");
 
 const errorController = require('./controllers/error');
@@ -57,12 +57,10 @@ app.use((req, res, next) => {
 app.use(flash());
 
 app.use(cookieParser("cookie-parser-secret"));
-app.use( 
-    csurf(
-      "123456789iamasecret987654321look", 
-      ["POST"]
-    )
-  ); 
+const { csrfSynchronisedProtection } = csrfSync({
+  getTokenFromRequest: (req) => req.body['CSRFToken'],
+});
+app.use(csrfSynchronisedProtection);
 app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   res.locals.isAuthenticated = req.session.isLoggedIn;
